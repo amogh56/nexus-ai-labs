@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusAI Labs | Enterprise Autonomous RAG & AI Agent Platform</title>
+  <meta name="description" content="Deploy autonomous RAG and AI agent swarms at enterprise scale. Sub-50ms hybrid vector retrieval, zero-data-leak military-grade security, and self-healing multi-step execution.">
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: {
+              950: '#05070B',
+              900: '#080C14',
+              850: '#0C111C',
+              800: '#111726',
+              700: '#1B243B',
+              600: '#2A3756',
+            },
+            cyan: {
+              glow: '#00F0FF',
+              neon: '#08F7FE',
+              dim: '#00B8D4',
+            },
+            violet: {
+              glow: '#8B5CF6',
+              neon: '#A855F7',
+              electric: '#9333EA',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'scanline': 'scanline 8s linear infinite',
+            'glow-cyan': 'glowCyan 3s ease-in-out infinite alternate',
+            'glow-violet': 'glowViolet 3s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            scanline: {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(1000%)' },
+            },
+            glowCyan: {
+              '0%': { boxShadow: '0 0 15px -3px rgba(0, 240, 255, 0.3)' },
+              '100%': { boxShadow: '0 0 35px 2px rgba(0, 240, 255, 0.6)' },
+            },
+            glowViolet: {
+              '0%': { boxShadow: '0 0 15px -3px rgba(168, 85, 247, 0.3)' },
+              '100%': { boxShadow: '0 0 35px 2px rgba(168, 85, 247, 0.6)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Cyberpunk & Glassmorphic Utilities */
+    body {
+      background-color: #06080F;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+
+    /* Cyber Grid Matrix */
+    .cyber-grid {
+      background-size: 44px 44px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+    }
+
+    .cyber-grid-dense {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
+    }
+
+    /* Radial Neon Glows */
+    .neon-radial-cyan {
+      background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
+    }
+
+    .neon-radial-violet {
+      background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0) 70%);
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: rgba(12, 17, 28, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.35);
+      box-shadow: 0 10px 40px -10px rgba(0, 240, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .glass-card-violet:hover {
+      border-color: rgba(168, 85, 247, 0.4);
+      box-shadow: 0 10px 40px -10px rgba(168, 85, 247, 0.18);
+      transform: translateY(-2px);
+    }
+
+    /* Custom Terminal Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080C14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1B243B;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00F0FF;
+    }
+
+    /* Text Glows */
+    .text-glow-cyan {
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+    .text-glow-violet {
+      text-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    }
+
+    /* Blinking Cursor */
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 18px;
+      background-color: #00F0FF;
+      vertical-align: middle;
+      animation: blink 0.9s infinite;
+    }
+  </style>
+</head>
+<body class="bg-obsidian-950 text-slate-200 antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- AMBIENT NEON GLOW LAYERS -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-[600px] h-[600px] neon-radial-cyan opacity-60 blur-3xl"></div>
+    <div class="absolute top-1/4 -right-40 w-[700px] h-[700px] neon-radial-violet opacity-50 blur-3xl"></div>
+    <div class="absolute bottom-10 left-1/3 w-[800px] h-[500px] neon-radial-cyan opacity-40 blur-3xl"></div>
+  </div>
+
+  <!-- STICKY NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-obsidian-950/85 border-b border-white/[0.08] transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- LOGO -->
+      <a href="#" class="flex items-center gap-3.5 group">
+        <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 via-violet-500/20 to-transparent p-0.5 border border-cyan-500/40 group-hover:border-cyan-glow group-hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-300 flex items-center justify-center">
+          <div class="w-full h-full bg-obsidian-900 rounded-[10px] flex items-center justify-center">
+            <!-- Hex Cyber Icon SVG -->
+            <svg class="w-5 h-5 text-cyan-glow group-hover:rotate-45 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <!-- Corner pulse dot -->
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-cyan-glow rounded-full animate-ping"></span>
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-cyan-glow rounded-full"></span>
+        </div>
+        
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl font-extrabold tracking-wider text-white font-mono">NEXUS<span class="text-cyan-glow">AI</span></span>
+            <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/30 uppercase tracking-widest font-mono">LABS</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Autonomous RAG & Swarms</span>
+        </div>
+      </a>
+
+      <!-- DESKTOP NAVIGATION LINKS -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#solutions" class="text-slate-300 hover:text-cyan-glow transition-colors duration-200">Solutions</a>
+        <a href="#playground" class="flex items-center gap-2 text-slate-300 hover:text-cyan-glow transition-colors duration-200">
+          Playground
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-glow opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-glow"></span>
+          </span>
+        </a>
+        <a href="#architecture" class="text-slate-300 hover:text-cyan-glow transition-colors duration-200">Architecture</a>
+        <a href="#metrics" class="text-slate-300 hover:text-cyan-glow transition-colors duration-200">Metrics</a>
+        <a href="#about" class="text-slate-300 hover:text-cyan-glow transition-colors duration-200">About</a>
+      </nav>
+
+      <!-- RIGHT ACTIONS -->
+      <div class="hidden md:flex items-center gap-4">
+        <!-- Audio Synth FX Toggle -->
+        <button id="sfx-toggle" title="Toggle UI sound synthesizers" class="p-2 rounded-lg border border-slate-800 bg-obsidian-900/80 text-slate-400 hover:text-cyan-glow hover:border-cyan-500/30 transition-all text-xs font-mono flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+          </svg>
+          <span id="sfx-status">SFX: ON</span>
+        </button>
+
+        <!-- CTA Launch Console -->
+        <button onclick="openConsoleModal()" class="relative group px-5 py-2.5 rounded-lg text-sm font-semibold text-white overflow-hidden transition-all duration-300 border border-cyan-500/40 hover:border-cyan-glow shadow-[0_0_15px_rgba(0,240,255,0.2)] hover:shadow-[0_0_25px_rgba(0,240,255,0.5)]">
+          <div class="absolute inset-0 bg-gradient-to-r from-cyan-600/30 via-violet-600/30 to-cyan-600/30 group-hover:opacity-100 transition-opacity"></div>
+          <span class="relative flex items-center gap-2 font-mono">
+            <span>Launch Console</span>
+            <svg class="w-4 h-4 text-cyan-glow group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <!-- MOBILE MENU HAMBURGER -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg border border-slate-800 text-slate-300 hover:text-cyan-glow" aria-label="Toggle Navigation">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- MOBILE DROPDOWN -->
+    <div id="mobile-menu" class="hidden md:hidden border-b border-white/[0.08] bg-obsidian-950/95 px-6 py-6 space-y-4">
+      <a href="#solutions" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-cyan-glow text-base font-medium">Solutions</a>
+      <a href="#playground" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-cyan-glow text-base font-medium">Interactive Playground</a>
+      <a href="#architecture" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-cyan-glow text-base font-medium">Architecture</a>
+      <a href="#metrics" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-cyan-glow text-base font-medium">Metrics & ROI</a>
+      <a href="#about" onclick="toggleMobileMenu()" class="block text-slate-300 hover:text-cyan-glow text-base font-medium">About Us</a>
+      <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+        <button onclick="openConsoleModal(); toggleMobileMenu()" class="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 text-black font-bold font-mono text-center">
+          Launch Console
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE SYSTEM TELEMETRY TICKER -->
+  <div class="border-b border-white/[0.05] bg-obsidian-900/60 py-2 overflow-hidden relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between text-[11px] font-mono text-slate-400">
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1.5 text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          NETWORK STATUS: OPTIMAL
+        </span>
+        <span class="hidden sm:inline text-slate-600">|</span>
+        <span class="hidden sm:inline">NODES: 18 GLOBAL AIR-GAP ENCLAVES</span>
+        <span class="hidden md:inline text-slate-600">|</span>
+        <span class="hidden md:inline text-cyan-glow">P99 LATENCY: 38ms</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-violet-300 hidden lg:inline">RAG PRECISION: 99.98%</span>
+        <span class="text-slate-500">v4.2.1-ENTERPRISE-STABLE</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="relative pt-24 pb-20 md:pt-32 md:pb-28 cyber-grid overflow-hidden">
+      <!-- Radial gradient mask for grid fading at edges -->
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-obsidian-950/80 to-obsidian-950 pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-4xl mx-auto">
+          
+          <!-- ANNOUNCEMENT BADGE -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-obsidian-850/90 border border-cyan-500/30 text-xs font-mono text-cyan-300 mb-8 shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+            <span class="w-2 h-2 rounded-full bg-cyan-glow animate-ping"></span>
+            <span class="font-semibold text-white">NEXUS-RAG v4.2 RELEASED</span>
+            <span class="text-slate-500">/</span>
+            <span>Self-Healing Swarms Active</span>
+            <svg class="w-3.5 h-3.5 text-cyan-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+
+          <!-- MAIN HERO HEADLINE -->
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1] mb-6">
+            Deploy Autonomous <br class="hidden sm:inline" />
+            <span class="bg-gradient-to-r from-cyan-glow via-teal-200 to-violet-400 bg-clip-text text-transparent text-glow-cyan">
+              RAG & AI Agents
+            </span>
+            <br />at Enterprise Scale
+          </h1>
+
+          <!-- SUBHEADLINE -->
+          <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-10 font-normal">
+            Harness self-healing multi-agent swarms and sub-50ms hybrid vector retrieval with zero data leakage. Engineered for mission-critical enterprise workflows and deterministic on-premise execution.
+          </p>
+
+          <!-- DUAL CTAS & CLI INSTALLER -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <!-- Initialize Agent Button -->
+            <a href="#playground" class="w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-obsidian-950 bg-gradient-to-r from-cyan-glow to-cyan-dim hover:from-cyan-neon hover:to-cyan-400 shadow-[0_0_30px_rgba(0,240,255,0.45)] hover:shadow-[0_0_45px_rgba(0,240,255,0.7)] transition-all duration-300 flex items-center justify-center gap-2.5 font-mono text-sm group">
+              <svg class="w-5 h-5 text-obsidian-950 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              <span>Initialize Agent Swarm</span>
+            </a>
+
+            <!-- View Documentation Button -->
+            <button onclick="openDocModal()" class="w-full sm:w-auto px-8 py-4 rounded-xl font-medium text-slate-200 bg-obsidian-900/90 hover:bg-obsidian-850 border border-slate-700/80 hover:border-violet-500/50 shadow-lg hover:shadow-[0_0_25px_rgba(168,85,247,0.3)] transition-all duration-300 flex items-center justify-center gap-2 font-mono text-sm">
+              <svg class="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <span>View Documentation</span>
+            </button>
+          </div>
+
+          <!-- TERMINAL CLI SNIPPET -->
+          <div class="inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-obsidian-900/90 border border-slate-800 text-xs font-mono text-slate-300 shadow-xl max-w-md mx-auto">
+            <span class="text-cyan-glow">$</span>
+            <span id="cli-cmd" class="text-slate-300">npx @nexusai/cli init --enterprise --rag</span>
+            <button onclick="copyCliCommand()" class="text-slate-400 hover:text-cyan-glow transition-colors p-1" title="Copy CLI Command">
+              <svg id="copy-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+            <span id="copy-tooltip" class="hidden text-[10px] text-cyan-glow font-bold">COPIED!</span>
+          </div>
+
+        </div>
+
+        <!-- FLOATING ORCHESTRATION PREVIEW CARDS (HERO ACCENTS) -->
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          
+          <!-- Card 1: Vector RAG Latency -->
+          <div class="glass-card rounded-2xl p-5 border-l-2 border-l-cyan-glow relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-cyan-glow uppercase tracking-wider">Retrieval Engine</span>
+              <span class="w-2 h-2 rounded-full bg-cyan-glow animate-pulse"></span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono mb-1">38.4 ms</div>
+            <p class="text-xs text-slate-400">P99 hybrid semantic + sparse search over 500M vectors</p>
+            <div class="w-full bg-obsidian-950 h-1.5 rounded-full mt-4 overflow-hidden">
+              <div class="bg-gradient-to-r from-cyan-500 to-teal-400 h-full w-[94%]"></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Grounding Precision -->
+          <div class="glass-card glass-card-violet rounded-2xl p-5 border-l-2 border-l-violet-neon relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-violet-300 uppercase tracking-wider">Grounding Truth</span>
+              <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono mb-1">99.98%</div>
+            <p class="text-xs text-slate-400">Zero-hallucination verification with cryptographic source hashing</p>
+            <div class="w-full bg-obsidian-950 h-1.5 rounded-full mt-4 overflow-hidden">
+              <div class="bg-gradient-to-r from-violet-500 to-purple-400 h-full w-[99.9%]"></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Security & Air-Gap -->
+          <div class="glass-card rounded-2xl p-5 border-l-2 border-l-emerald-400 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Data Leak Protection</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono mb-1">100% On-Prem</div>
+            <p class="text-xs text-slate-400">Zero egress telemetry. Encrypted memory enclaves (Confidential VM)</p>
+            <div class="w-full bg-obsidian-950 h-1.5 rounded-full mt-4 overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-full"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- METRICS & IMPACT BAR -->
+    <section id="metrics" class="py-16 bg-obsidian-900/80 border-y border-white/[0.06] relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 divide-y lg:divide-y-0 lg:divide-x divide-white/[0.08]">
+          
+          <!-- Metric 1 -->
+          <div class="pt-6 lg:pt-0 lg:px-6 text-center">
+            <div class="text-4xl sm:text-5xl font-black text-cyan-glow font-mono tracking-tight mb-2 text-glow-cyan">
+              99.98%
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">RAG Precision</div>
+            <p class="text-xs text-slate-400 max-w-[200px] mx-auto">Deterministic citation grounding eliminates enterprise hallucination</p>
+          </div>
+
+          <!-- Metric 2 -->
+          <div class="pt-6 lg:pt-0 lg:px-6 text-center">
+            <div class="text-4xl sm:text-5xl font-black text-white font-mono tracking-tight mb-2">
+              45<span class="text-cyan-glow">ms</span>
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">Average Latency</div>
+            <p class="text-xs text-slate-400 max-w-[200px] mx-auto">Sub-second hybrid dense & sparse vector retrieval across 10M+ tokens</p>
+          </div>
+
+          <!-- Metric 3 -->
+          <div class="pt-6 lg:pt-0 lg:px-6 text-center">
+            <div class="text-4xl sm:text-5xl font-black text-violet-400 font-mono tracking-tight mb-2 text-glow-violet">
+              100+
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">Enterprise Deployments</div>
+            <p class="text-xs text-slate-400 max-w-[200px] mx-auto">Fortune 500 financial institutions, healthcare systems, and defense</p>
+          </div>
+
+          <!-- Metric 4 -->
+          <div class="pt-6 lg:pt-0 lg:px-6 text-center">
+            <div class="text-4xl sm:text-5xl font-black text-emerald-400 font-mono tracking-tight mb-2">
+              $14.2M
+            </div>
+            <div class="text-sm font-semibold text-white mb-1">Mean Annual Savings</div>
+            <p class="text-xs text-slate-400 max-w-[200px] mx-auto">Direct operational efficiency gains measured across active customer swarms</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CORE SOLUTIONS / SERVICES (3-COLUMN BENTO GRID) -->
+    <section id="solutions" class="py-24 relative cyber-grid-dense">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- SECTION HEADER -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-glow uppercase tracking-wider mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow"></span>
+            Enterprise AI Architecture
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+            Engineered for Mission-Critical <br class="hidden sm:inline" />
+            <span class="bg-gradient-to-r from-cyan-glow to-violet-400 bg-clip-text text-transparent">Autonomous Workflows</span>
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg">
+            NexusAI replaces fragile prompt chains with resilient agent swarms, sub-second hybrid vector search, and cryptographic privacy enclaves.
+          </p>
+        </div>
+
+        <!-- 3-COLUMN BENTO GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- CARD 1: Autonomous Workflow Agents -->
+          <div class="glass-card rounded-2xl p-8 flex flex-col justify-between border-t-2 border-t-cyan-glow relative overflow-hidden group">
+            <!-- Background Watermark Glow -->
+            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all"></div>
+
+            <div>
+              <!-- ICON & TAG -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="w-14 h-14 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-glow shadow-[0_0_20px_rgba(0,240,255,0.2)]">
+                  <!-- Swarm Agent SVG -->
+                  <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    <circle cx="12" cy="16" r="1"/>
+                  </svg>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 uppercase tracking-widest font-semibold">
+                  Multi-Agent Swarm
+                </span>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-glow transition-colors">
+                Autonomous Workflow Agents
+              </h3>
+
+              <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                Self-healing multi-step task execution. Agents continuously evaluate their own outputs, auto-correct failed tool invocations, and escalate to human operators only when deterministic thresholds require authorization.
+              </p>
+
+              <!-- INTERACTIVE FEATURE LIST -->
+              <div class="space-y-3 font-mono text-xs mb-8">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-cyan-glow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Self-Reflecting Feedback Loops</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-cyan-glow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Deterministic State Machine Rollback</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-cyan-glow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Dynamic Tool Chaining & API Integration</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-cyan-glow shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Role-Based Human-In-The-Loop Approval</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD FOOTER MICRO STAT -->
+            <div class="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Execution Reliability</span>
+              <span class="text-cyan-glow font-bold">99.94% Success</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: Enterprise Vector RAG Pipelines -->
+          <div class="glass-card glass-card-violet rounded-2xl p-8 flex flex-col justify-between border-t-2 border-t-violet-neon relative overflow-hidden group">
+            <!-- Background Watermark Glow -->
+            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all"></div>
+
+            <div>
+              <!-- ICON & TAG -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="w-14 h-14 rounded-xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+                  <!-- Vector Lattice SVG -->
+                  <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <circle cx="4" cy="6" r="2"/>
+                    <circle cx="20" cy="6" r="2"/>
+                    <circle cx="4" cy="18" r="2"/>
+                    <circle cx="20" cy="18" r="2"/>
+                    <line x1="6" y1="7" x2="10" y2="10.5"/>
+                    <line x1="18" y1="7" x2="14" y2="10.5"/>
+                    <line x1="6" y1="17" x2="10" y2="13.5"/>
+                    <line x1="18" y1="17" x2="14" y2="13.5"/>
+                  </svg>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-violet-500/15 text-violet-300 border border-violet-500/30 uppercase tracking-widest font-semibold">
+                  Sub-50ms Retrieval
+                </span>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-violet-300 transition-colors">
+                Enterprise Vector RAG Pipelines
+              </h3>
+
+              <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                Hybrid semantic search engine pairing dense vector embeddings with sparse BM25 indexing and graph-augmented traversal. Ingests PDFs, tables, video, and audio with contextual dynamic chunking.
+              </p>
+
+              <!-- INTERACTIVE FEATURE LIST -->
+              <div class="space-y-3 font-mono text-xs mb-8">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Hybrid Dense + Sparse Re-ranking (Cohere/BGE)</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Contextual Chunking with Semantic Boundaries</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Knowledge Graph Augmentation (Neo4j / Memgraph)</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-violet-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Sub-second Query Latency Across 10M+ Chunks</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD FOOTER MICRO STAT -->
+            <div class="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">P99 Query Latency</span>
+              <span class="text-violet-300 font-bold">38ms Global</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: Zero-Data-Leak Security -->
+          <div class="glass-card rounded-2xl p-8 flex flex-col justify-between border-t-2 border-t-emerald-400 relative overflow-hidden group">
+            <!-- Background Watermark Glow -->
+            <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+
+            <div>
+              <!-- ICON & TAG -->
+              <div class="flex items-center justify-between mb-6">
+                <div class="w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <!-- Shield Lock SVG -->
+                  <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <rect x="9" y="11" width="6" height="4" rx="1"/>
+                  </svg>
+                </div>
+                <span class="text-[11px] font-mono px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 uppercase tracking-widest font-semibold">
+                  Zero Egress Enclave
+                </span>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-300 transition-colors">
+                Zero-Data-Leak Security
+              </h3>
+
+              <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                End-to-end encrypted on-premise model execution. Your confidential enterprise datasets never leave your perimeter, are never fed into public foundation models, and remain isolated inside hardware-grade enclaves.
+              </p>
+
+              <!-- INTERACTIVE FEATURE LIST -->
+              <div class="space-y-3 font-mono text-xs mb-8">
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Confidential Hardware Enclaves (AMD SEV / Intel SGX)</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>SOC2 Type II, HIPAA, ISO 27001, FedRAMP Compliant</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Zero Model Retraining on Customer Data</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-300">
+                  <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  <span>Cryptographic Data De-identification & Redaction</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD FOOTER MICRO STAT -->
+            <div class="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Audit Compliance</span>
+              <span class="text-emerald-400 font-bold">100% Air-Gapped</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- INTERACTIVE AI PLAYGROUND MOCKUP -->
+    <section id="playground" class="py-24 bg-obsidian-900/60 border-y border-white/[0.06] relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- SECTION HEADER -->
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-xs font-mono text-violet-300 uppercase tracking-wider mb-4">
+            <span class="w-2 h-2 rounded-full bg-cyan-glow animate-ping"></span>
+            Simulated Agent Swarm Sandbox
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+            Interactive AI Playground
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg">
+            Experience real-time autonomous RAG reasoning and multi-step agent execution. Select a pre-configured enterprise prompt or input your own.
+          </p>
+        </div>
+
+        <!-- PLAYGROUND TERMINAL DECK -->
+        <div class="rounded-2xl border border-cyan-500/30 bg-obsidian-950 shadow-[0_0_50px_rgba(0,240,255,0.15)] overflow-hidden">
+          
+          <!-- TERMINAL HEADER BAR -->
+          <div class="bg-obsidian-900 px-4 py-3 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <!-- Window Dots -->
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+              </div>
+              <div class="text-xs font-mono text-slate-300 flex items-center gap-2">
+                <span class="text-cyan-glow">nexus-agent</span>
+                <span class="text-slate-600">@</span>
+                <span>vpc-cluster-us-east-01</span>
+                <span class="text-slate-600">:</span>
+                <span class="text-violet-400">~/production-rag</span>
+              </div>
+            </div>
+
+            <!-- TERMINAL METADATA INDICATORS -->
+            <div class="flex items-center gap-4 text-[11px] font-mono text-slate-400">
+              <span class="flex items-center gap-1.5 text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                AGENT SWARM ACTIVE
+              </span>
+              <span class="hidden sm:inline text-slate-500">|</span>
+              <span class="hidden sm:inline text-cyan-glow" id="terminal-latency">LATENCY: 38ms</span>
+              <span class="hidden md:inline text-slate-500">|</span>
+              <span class="hidden md:inline" id="terminal-tokens">SPEED: 412 tok/s</span>
+              
+              <!-- CLEAR TERMINAL BUTTON -->
+              <button onclick="clearTerminal()" class="px-2 py-1 rounded bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 hover:text-cyan-glow border border-slate-700 transition-colors" title="Clear Terminal">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- PRE-LOADED PROMPT CHIPS -->
+          <div class="bg-obsidian-900/60 p-4 border-b border-white/[0.05] flex flex-wrap items-center gap-2">
+            <span class="text-xs font-mono text-slate-400 mr-2 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-cyan-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Quick Presets:
+            </span>
+            <button onclick="runPresetPrompt(0)" class="prompt-chip px-3 py-1.5 rounded-lg bg-obsidian-850 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-glow border border-slate-800 hover:border-cyan-500/40 text-xs font-mono transition-all">
+              1. SEC 10-K Supply Chain Risk
+            </button>
+            <button onclick="runPresetPrompt(1)" class="prompt-chip px-3 py-1.5 rounded-lg bg-obsidian-850 hover:bg-violet-500/20 text-slate-300 hover:text-violet-300 border border-slate-800 hover:border-violet-500/40 text-xs font-mono transition-all">
+              2. Multi-Agent Cloud Incident Swarm
+            </button>
+            <button onclick="runPresetPrompt(2)" class="prompt-chip px-3 py-1.5 rounded-lg bg-obsidian-850 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/40 text-xs font-mono transition-all">
+              3. Zero-Data-Leak HIPAA Audit
+            </button>
+            <button onclick="runPresetPrompt(3)" class="prompt-chip px-3 py-1.5 rounded-lg bg-obsidian-850 hover:bg-cyan-500/20 text-slate-300 hover:text-cyan-glow border border-slate-800 hover:border-cyan-500/40 text-xs font-mono transition-all">
+              4. Hybrid 10M-Doc Vector Search
+            </button>
+          </div>
+
+          <!-- STREAMING TERMINAL OUTPUT SCREEN -->
+          <div id="terminal-screen" class="p-6 font-mono text-sm min-h-[380px] max-h-[520px] overflow-y-auto space-y-4 bg-obsidian-950/95">
+            <!-- Initialized Output -->
+            <div class="text-slate-500 text-xs flex items-center gap-2">
+              <span class="text-cyan-glow font-bold">[NexusAI v4.2 Kernel Initialized]</span>
+              <span>Loaded Models: Nexus-70B-Titanium, HNSW Vector Engine, BGE-Reranker-Large</span>
+            </div>
+            
+            <div id="terminal-logs" class="space-y-3">
+              <!-- Logs and streaming text will be injected here dynamically -->
+              <div class="p-4 rounded-xl bg-obsidian-900/60 border border-slate-800 text-slate-300">
+                <span class="text-cyan-glow font-bold">READY FOR EXECUTION:</span> Select one of the presets above or type a custom enterprise query below to observe autonomous agent execution, multi-step tool calls, and streaming grounded responses.
+              </div>
+            </div>
+
+            <!-- Active streaming cursor holder -->
+            <div id="streaming-container" class="hidden text-slate-200 leading-relaxed font-sans text-sm p-4 rounded-xl bg-obsidian-900/90 border border-cyan-500/30">
+              <div class="flex items-center gap-2 text-xs font-mono text-cyan-glow mb-2 pb-2 border-b border-white/[0.08]">
+                <span class="w-2 h-2 rounded-full bg-cyan-glow animate-ping"></span>
+                <span>STREAMING GROUNDED RESPONSE (CONFIDENCE: 99.98% | LATENCY: 38ms)</span>
+              </div>
+              <span id="streaming-text" class="text-slate-200"></span><span id="cursor-indicator" class="cursor-blink"></span>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE PROMPT INPUT DOCK -->
+          <div class="bg-obsidian-900 p-4 border-t border-white/[0.08]">
+            <form id="playground-form" onsubmit="handleCustomSubmit(event)" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              
+              <!-- MODE SELECTOR -->
+              <div class="shrink-0 flex items-center gap-2">
+                <label for="agent-mode" class="sr-only">Mode</label>
+                <select id="agent-mode" class="bg-obsidian-950 text-slate-300 text-xs font-mono px-3 py-3 rounded-xl border border-slate-700 focus:border-cyan-glow focus:outline-none">
+                  <option value="rag">Mode: Vector RAG</option>
+                  <option value="swarm">Mode: Agent Swarm</option>
+                  <option value="airgap">Mode: Zero-Leak Enclave</option>
+                </select>
+              </div>
+
+              <!-- TEXT INPUT -->
+              <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-cyan-glow font-mono text-sm">
+                  &gt;
+                </div>
+                <input 
+                  type="text" 
+                  id="prompt-input" 
+                  placeholder="Type an enterprise query (e.g., 'Audit cross-border supplier liabilities in APAC region')..." 
+                  class="w-full pl-9 pr-4 py-3 bg-obsidian-950 border border-slate-700/80 rounded-xl text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_20px_rgba(0,240,255,0.3)] transition-all"
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- RUN BUTTON -->
+              <button 
+                type="submit" 
+                id="run-btn"
+                class="px-6 py-3 rounded-xl font-bold font-mono text-xs text-obsidian-950 bg-cyan-glow hover:bg-cyan-neon shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+              >
+                <span>RUN QUERY</span>
+                <svg class="w-4 h-4 text-obsidian-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE & PIPELINE DEEP DIVE -->
+    <section id="architecture" class="py-24 relative cyber-grid">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- SECTION HEADER -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-glow uppercase tracking-wider mb-4">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow"></span>
+            Technical Blueprint
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+            Under the Hood: The NexusAI Engine
+          </h2>
+          <p class="text-slate-400 text-base sm:text-lg">
+            An end-to-end distributed pipeline designed for deterministic execution, high-concurrency vector indexing, and zero external data transmission.
+          </p>
+        </div>
+
+        <!-- 4-PHASE ARCHITECTURAL FLOW -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- Phase 1 -->
+          <div class="glass-card rounded-2xl p-6 border-t-2 border-t-cyan-glow flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-cyan-glow font-bold mb-3 flex items-center justify-between">
+                <span>STAGE 01</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-[10px]">INGESTION</span>
+              </div>
+              <h4 class="text-lg font-bold text-white mb-2">Multi-Modal Ingestion</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Dynamic connectors for Snowflake, BigQuery, Databricks, PostgreSQL, Salesforce, and unstructured PDF/Audio streams. Automatic chunking with semantic boundaries.
+              </p>
+            </div>
+            <div class="bg-obsidian-950 p-3 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1">
+              <div class="text-cyan-glow">● PDF, JSON, Parquet, OCR</div>
+              <div>● Token Deduplication: Active</div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="glass-card glass-card-violet rounded-2xl p-6 border-t-2 border-t-violet-neon flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-violet-300 font-bold mb-3 flex items-center justify-between">
+                <span>STAGE 02</span>
+                <span class="px-2 py-0.5 rounded bg-violet-500/20 text-[10px]">VECTOR FABRIC</span>
+              </div>
+              <h4 class="text-lg font-bold text-white mb-2">Hybrid Dense + Sparse</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Hierarchical Navigable Small World (HNSW) graph paired with BM25 inverted lexical indexing. Neural re-ranking scores top 50 chunks in under 12 milliseconds.
+              </p>
+            </div>
+            <div class="bg-obsidian-950 p-3 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1">
+              <div class="text-violet-300">● Cosine + BM25 Reciprocal Rank</div>
+              <div>● GPU Sharded Index (Milvus/Qdrant)</div>
+            </div>
+          </div>
+
+          <!-- Phase 3 -->
+          <div class="glass-card rounded-2xl p-6 border-t-2 border-t-cyan-glow flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-cyan-glow font-bold mb-3 flex items-center justify-between">
+                <span>STAGE 03</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-[10px]">AGENTIC CORE</span>
+              </div>
+              <h4 class="text-lg font-bold text-white mb-2">Self-Healing Swarms</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Planner-Worker-Verifier triad. Agents decompose complex user instructions into a directed acyclic graph (DAG), running tools asynchronously with auto-rollback.
+              </p>
+            </div>
+            <div class="bg-obsidian-950 p-3 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1">
+              <div class="text-cyan-glow">● ReAct Loop + Reflection</div>
+              <div>● Sandboxed Python/Wasm Exec</div>
+            </div>
+          </div>
+
+          <!-- Phase 4 -->
+          <div class="glass-card rounded-2xl p-6 border-t-2 border-t-emerald-400 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-emerald-400 font-bold mb-3 flex items-center justify-between">
+                <span>STAGE 04</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-[10px]">AIR-GAP SHIELD</span>
+              </div>
+              <h4 class="text-lg font-bold text-white mb-2">Zero-Data-Leak Enclave</h4>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Execution lives in customer-owned VPCs or bare-metal servers. Ephemeral RAM-only encryption, full PII scrubbing, and cryptographically verified audit trails.
+              </p>
+            </div>
+            <div class="bg-obsidian-950 p-3 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 space-y-1">
+              <div class="text-emerald-400">● AES-256 GCM In-Memory</div>
+              <div>● Zero Egress Telemetry</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- INTERACTIVE COMPARISON MATRIX (TRADITIONAL VS NEXUSAI) -->
+        <div class="mt-16 glass-card rounded-2xl p-8 border border-white/[0.08]">
+          <h3 class="text-xl font-bold text-white mb-6 font-mono flex items-center gap-2">
+            <span class="text-cyan-glow">#</span>
+            Architectural Benchmark: Traditional RAG vs. NexusAI Platform
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono text-xs">
+              <thead>
+                <tr class="border-b border-white/[0.1] text-slate-400">
+                  <th class="py-3 px-4 font-semibold uppercase">Feature / Parameter</th>
+                  <th class="py-3 px-4 font-semibold uppercase text-rose-400">Vanilla Enterprise RAG</th>
+                  <th class="py-3 px-4 font-semibold uppercase text-cyan-glow">NexusAI Labs Autonomous</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/[0.05] text-slate-300">
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-white">Retrieval Paradigm</td>
+                  <td class="py-3 px-4 text-slate-400">Naive Single-Dense Vector Search</td>
+                  <td class="py-3 px-4 text-cyan-glow font-bold">Hybrid Dense + Sparse BM25 + Knowledge Graph</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-white">P99 Query Latency</td>
+                  <td class="py-3 px-4 text-slate-400">850ms – 2,400ms</td>
+                  <td class="py-3 px-4 text-cyan-glow font-bold">38ms – 45ms (Sub-second)</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-white">Hallucination Mitigation</td>
+                  <td class="py-3 px-4 text-slate-400">Prompting heuristic only (~12-18% errors)</td>
+                  <td class="py-3 px-4 text-emerald-400 font-bold">99.98% Cryptographic Citation Grounding</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-white">Agent Recovery & Tools</td>
+                  <td class="py-3 px-4 text-slate-400">Fails on unhandled API exception</td>
+                  <td class="py-3 px-4 text-violet-300 font-bold">Self-Healing Loop with Auto-Rollback DAG</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-4 font-semibold text-white">Data Sovereignty</td>
+                  <td class="py-3 px-4 text-slate-400">Data leaves perimeter to public SaaS API</td>
+                  <td class="py-3 px-4 text-emerald-400 font-bold">100% On-Prem / VPC Air-Gapped Enclave</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABOUT US / VISION SECTION -->
+    <section id="about" class="py-24 bg-obsidian-900/40 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-xs font-mono text-violet-300 uppercase tracking-wider mb-6">
+              <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+              Our Mission & Vision
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 leading-tight">
+              Bridging the Chasm Between Frontier Models & <span class="text-cyan-glow text-glow-cyan">Deterministic Execution</span>
+            </h2>
+
+            <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">
+              At NexusAI Labs, we believe intelligence is meaningless for enterprises without mathematical precision and absolute data sovereignty. Public LLMs are creative, but enterprises run on contracts, balance sheets, and patient outcomes where a single hallucination is catastrophic.
+            </p>
+
+            <p class="text-slate-400 text-sm leading-relaxed mb-8">
+              We built NexusAI to give Fortune 500 engineering and risk teams complete authority over their AI future: deterministic RAG pipelines, air-gapped on-premise deployments, and autonomous agents that can fix their own errors before human intervention is even requested.
+            </p>
+
+            <!-- 4 FOUNDING PILLARS -->
+            <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+              <div class="p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+                <div class="text-cyan-glow font-bold mb-1">01. SOVEREIGN AI</div>
+                <div class="text-slate-400 text-[11px]">Zero model retraining on customer IP</div>
+              </div>
+              <div class="p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+                <div class="text-violet-400 font-bold mb-1">02. MATHEMATICAL TRUTH</div>
+                <div class="text-slate-400 text-[11px]">Cryptographic citation grounding</div>
+              </div>
+              <div class="p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+                <div class="text-emerald-400 font-bold mb-1">03. SELF-HEALING</div>
+                <div class="text-slate-400 text-[11px]">Automated task error recovery</div>
+              </div>
+              <div class="p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+                <div class="text-cyan-glow font-bold mb-1">04. AIR-GAP READY</div>
+                <div class="text-slate-400 text-[11px]">Full bare-metal compliance</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISION VISUAL DECK -->
+          <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-violet-500/20 to-transparent rounded-3xl blur-2xl"></div>
+            
+            <div class="relative glass-card rounded-3xl p-8 border border-white/[0.1] shadow-2xl space-y-6">
+              
+              <div class="flex items-center justify-between pb-6 border-b border-white/[0.08]">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-glow font-mono font-bold">
+                    N
+                  </div>
+                  <div>
+                    <div class="text-sm font-bold text-white font-mono">NEXUS RESEARCH LABS</div>
+                    <div class="text-xs text-slate-400 font-mono">San Francisco & Zurich</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-mono">
+                  ISO-27001
+                </span>
+              </div>
+
+              <!-- KEY ACCOMPLISHMENTS STATS -->
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs font-mono mb-1">
+                    <span class="text-slate-300">Deterministic RAG Accuracy</span>
+                    <span class="text-cyan-glow font-bold">99.98%</span>
+                  </div>
+                  <div class="w-full bg-obsidian-950 h-2 rounded-full overflow-hidden">
+                    <div class="bg-cyan-glow h-full w-[99.98%]"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs font-mono mb-1">
+                    <span class="text-slate-300">Air-Gapped Deployment Uptime</span>
+                    <span class="text-violet-400 font-bold">99.999% SLA</span>
+                  </div>
+                  <div class="w-full bg-obsidian-950 h-2 rounded-full overflow-hidden">
+                    <div class="bg-violet-500 h-full w-[99.999%]"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs font-mono mb-1">
+                    <span class="text-slate-300">Total Enterprise Tokens Processed</span>
+                    <span class="text-emerald-400 font-bold">4.2 Trillion</span>
+                  </div>
+                  <div class="w-full bg-obsidian-950 h-2 rounded-full overflow-hidden">
+                    <div class="bg-emerald-400 h-full w-[96%]"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-obsidian-950/80 border border-slate-800 text-xs font-mono text-slate-400 leading-relaxed">
+                <span class="text-cyan-glow">"We benchmarked every open and proprietary RAG engine. NexusAI Labs was the only platform that delivered sub-50ms latency with zero data egress outside our private VPC."</span>
+                <div class="mt-2 text-slate-300 font-semibold">— VP of Infrastructure, Global Tier-1 Investment Bank</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT & CONSULTATION (LEAD GENERATION FORM) -->
+    <section id="contact" class="py-24 relative cyber-grid-dense">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="glass-card rounded-3xl p-8 sm:p-12 border border-cyan-500/30 relative overflow-hidden shadow-[0_0_60px_rgba(0,240,255,0.12)]">
+          
+          <div class="text-center max-w-2xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-glow uppercase tracking-wider mb-4">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-glow"></span>
+              Enterprise Consultation
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+              Deploy Your Private AI Cluster
+            </h2>
+            <p class="text-slate-400 text-sm sm:text-base">
+              Speak with our senior AI architects. Get an immediate architecture audit score and custom deployment blueprint for your infrastructure.
+            </p>
+          </div>
+
+          <!-- FORM -->
+          <form id="lead-form" onsubmit="handleLeadSubmit(event)" class="space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Full Name -->
+              <div>
+                <label for="lead-name" class="block text-xs font-mono text-slate-300 mb-2">FULL NAME *</label>
+                <input 
+                  type="text" 
+                  id="lead-name" 
+                  required 
+                  placeholder="Dr. Elena Vance" 
+                  class="w-full px-4 py-3 bg-obsidian-950 border border-slate-800 rounded-xl text-sm font-mono text-white placeholder-slate-600 focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+                >
+              </div>
+
+              <!-- Enterprise Email -->
+              <div>
+                <label for="lead-email" class="block text-xs font-mono text-slate-300 mb-2">WORK EMAIL *</label>
+                <input 
+                  type="email" 
+                  id="lead-email" 
+                  required 
+                  placeholder="elena@enterprise.com" 
+                  class="w-full px-4 py-3 bg-obsidian-950 border border-slate-800 rounded-xl text-sm font-mono text-white placeholder-slate-600 focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Company Name -->
+              <div>
+                <label for="lead-company" class="block text-xs font-mono text-slate-300 mb-2">ORGANIZATION / COMPANY *</label>
+                <input 
+                  type="text" 
+                  id="lead-company" 
+                  required 
+                  placeholder="AcroCorp Global Technologies" 
+                  class="w-full px-4 py-3 bg-obsidian-950 border border-slate-800 rounded-xl text-sm font-mono text-white placeholder-slate-600 focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+                >
+              </div>
+
+              <!-- Deployment Environment -->
+              <div>
+                <label for="lead-deployment" class="block text-xs font-mono text-slate-300 mb-2">DEPLOYMENT TARGET *</label>
+                <select 
+                  id="lead-deployment" 
+                  class="w-full px-4 py-3 bg-obsidian-950 border border-slate-800 rounded-xl text-sm font-mono text-white focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+                >
+                  <option value="airgap">Air-Gapped On-Premises (Bare Metal)</option>
+                  <option value="vpc">Dedicated Private Cloud VPC (AWS/Azure/GCP)</option>
+                  <option value="hybrid">Hybrid Sovereign Enclave</option>
+                  <option value="managed">NexusAI Hosted Dedicated Enclave</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Vector Dataset Scale -->
+            <div>
+              <label class="block text-xs font-mono text-slate-300 mb-2">ESTIMATED DAILY RAG VOLUME</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                <label class="flex items-center gap-2 p-3 rounded-xl bg-obsidian-950 border border-slate-800 hover:border-cyan-500/40 cursor-pointer">
+                  <input type="radio" name="scale" value="50k" checked class="text-cyan-glow focus:ring-0">
+                  <span>&lt; 100K Q/Day</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 rounded-xl bg-obsidian-950 border border-slate-800 hover:border-cyan-500/40 cursor-pointer">
+                  <input type="radio" name="scale" value="1m" class="text-cyan-glow focus:ring-0">
+                  <span>100K – 1M</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 rounded-xl bg-obsidian-950 border border-slate-800 hover:border-cyan-500/40 cursor-pointer">
+                  <input type="radio" name="scale" value="10m" class="text-cyan-glow focus:ring-0">
+                  <span>1M – 10M</span>
+                </label>
+                <label class="flex items-center gap-2 p-3 rounded-xl bg-obsidian-950 border border-slate-800 hover:border-cyan-500/40 cursor-pointer">
+                  <input type="radio" name="scale" value="enterprise" class="text-cyan-glow focus:ring-0">
+                  <span>10M+ Extreme</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div>
+              <label for="lead-notes" class="block text-xs font-mono text-slate-300 mb-2">WORKFLOW REQUIREMENTS (OPTIONAL)</label>
+              <textarea 
+                id="lead-notes" 
+                rows="3" 
+                placeholder="Describe your vector data sources, required compliance mandates (HIPAA/FedRAMP), or agent workflows..." 
+                class="w-full px-4 py-3 bg-obsidian-950 border border-slate-800 rounded-xl text-sm font-mono text-white placeholder-slate-600 focus:outline-none focus:border-cyan-glow focus:shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all"
+              ></textarea>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button 
+              type="submit" 
+              id="lead-submit-btn" 
+              class="w-full py-4 rounded-xl font-bold font-mono text-sm text-obsidian-950 bg-gradient-to-r from-cyan-glow via-cyan-neon to-violet-400 hover:opacity-95 shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-all flex items-center justify-center gap-2"
+            >
+              <span>REQUEST ARCHITECTURE AUDIT & DEMO</span>
+              <svg class="w-4 h-4 text-obsidian-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </button>
+
+            <!-- FORM RESULT MODAL / ALERT HOLDER -->
+            <div id="lead-success" class="hidden p-6 rounded-2xl bg-cyan-950/40 border border-cyan-glow text-center space-y-3">
+              <div class="w-12 h-12 rounded-full bg-cyan-glow/20 border border-cyan-glow flex items-center justify-center mx-auto text-cyan-glow">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <h4 class="text-lg font-bold text-white font-mono">ARCHITECTURE AUDIT INITIALIZED</h4>
+              <p class="text-xs text-slate-300 font-mono">
+                Your enterprise profile scored <span class="text-cyan-glow font-bold">98/100 Enterprise Architecture Readiness</span>. A Principal Infrastructure Architect has been assigned to your cluster.
+              </p>
+              <div class="text-[11px] font-mono text-slate-400">Confirmation transmitted via encrypted channel to your provided email.</div>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-obsidian-950 border-t border-white/[0.08] pt-16 pb-12 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        
+        <!-- BRAND COLUMN -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-glow">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <span class="text-lg font-extrabold tracking-wider text-white font-mono">NEXUS<span class="text-cyan-glow">AI</span> LABS</span>
+          </div>
+          
+          <p class="text-xs text-slate-400 font-normal leading-relaxed max-w-sm">
+            The sovereign autonomous intelligence platform for enterprise data teams. Sub-50ms hybrid vector retrieval, self-healing agent swarms, and air-gapped confidential compute.
+          </p>
+
+          <div class="flex items-center gap-3 text-xs font-mono text-emerald-400 pt-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>ALL GLOBAL CLUSTERS OPERATIONAL</span>
+          </div>
+        </div>
+
+        <!-- QUICK LINKS: PLATFORM -->
+        <div>
+          <h4 class="text-xs font-mono font-bold text-white uppercase tracking-wider mb-4">Platform</h4>
+          <ul class="space-y-2.5 text-xs text-slate-400 font-mono">
+            <li><a href="#solutions" class="hover:text-cyan-glow transition-colors">Autonomous Swarms</a></li>
+            <li><a href="#solutions" class="hover:text-cyan-glow transition-colors">Hybrid Vector RAG</a></li>
+            <li><a href="#solutions" class="hover:text-cyan-glow transition-colors">Zero-Data-Leak Enclave</a></li>
+            <li><a href="#architecture" class="hover:text-cyan-glow transition-colors">Architecture Blueprint</a></li>
+            <li><a href="#playground" class="hover:text-cyan-glow transition-colors">Live Agent Sandbox</a></li>
+          </ul>
+        </div>
+
+        <!-- QUICK LINKS: ENTERPRISE -->
+        <div>
+          <h4 class="text-xs font-mono font-bold text-white uppercase tracking-wider mb-4">Enterprise</h4>
+          <ul class="space-y-2.5 text-xs text-slate-400 font-mono">
+            <li><a href="#contact" class="hover:text-cyan-glow transition-colors">Security Whitepaper</a></li>
+            <li><a href="#contact" class="hover:text-cyan-glow transition-colors">SOC2 & HIPAA Specs</a></li>
+            <li><a href="#contact" class="hover:text-cyan-glow transition-colors">On-Premise Appliance</a></li>
+            <li><a href="#contact" class="hover:text-cyan-glow transition-colors">Custom LLM Enclaves</a></li>
+            <li><a href="#contact" class="hover:text-cyan-glow transition-colors">SLAs & Support</a></li>
+          </ul>
+        </div>
+
+        <!-- SOCIAL & LEGAL -->
+        <div>
+          <h4 class="text-xs font-mono font-bold text-white uppercase tracking-wider mb-4">Compliance</h4>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="px-2 py-1 rounded bg-obsidian-900 border border-slate-800 text-[10px] font-mono text-slate-300">SOC2 Type II</span>
+            <span class="px-2 py-1 rounded bg-obsidian-900 border border-slate-800 text-[10px] font-mono text-slate-300">HIPAA BAA</span>
+            <span class="px-2 py-1 rounded bg-obsidian-900 border border-slate-800 text-[10px] font-mono text-slate-300">ISO 27001</span>
+            <span class="px-2 py-1 rounded bg-obsidian-900 border border-slate-800 text-[10px] font-mono text-slate-300">FedRAMP Ready</span>
+          </div>
+          
+          <div class="flex items-center gap-3 pt-2 text-slate-400">
+            <!-- GitHub -->
+            <a href="#" class="p-2 rounded-lg bg-obsidian-900 hover:text-cyan-glow hover:bg-obsidian-850 transition-colors" title="GitHub">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            </a>
+            <!-- Discord -->
+            <a href="#" class="p-2 rounded-lg bg-obsidian-900 hover:text-cyan-glow hover:bg-obsidian-850 transition-colors" title="Discord">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.893.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <!-- X/Twitter -->
+            <a href="#" class="p-2 rounded-lg bg-obsidian-900 hover:text-cyan-glow hover:bg-obsidian-850 transition-colors" title="Twitter / X">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <!-- LinkedIn -->
+            <a href="#" class="p-2 rounded-lg bg-obsidian-900 hover:text-cyan-glow hover:bg-obsidian-850 transition-colors" title="LinkedIn">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COPYRIGHT & SYSTEM PING -->
+      <div class="border-t border-white/[0.06] pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono gap-4">
+        <div>
+          © 2026 NexusAI Labs Inc. All rights reserved. End-to-end encrypted architecture.
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-slate-400">Privacy Policy</a>
+          <a href="#" class="hover:text-slate-400">Terms of Service</a>
+          <a href="#" class="hover:text-slate-400">Security Disclosures</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- MODAL: LAUNCH CONSOLE SIMULATOR -->
+  <div id="console-modal" class="fixed inset-0 z-50 hidden bg-obsidian-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-2xl rounded-2xl border border-cyan-500/40 p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-white/[0.1] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-glow animate-pulse"></span>
+          <h3 class="text-sm font-bold text-white font-mono">NEXUS CLUSTER TELEMETRY</h3>
+        </div>
+        <button onclick="closeConsoleModal()" class="text-slate-400 hover:text-white p-1">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs text-slate-300">
+        <div class="p-3 rounded-lg bg-obsidian-950 border border-slate-800 space-y-1">
+          <div class="text-cyan-glow font-bold">&gt; AUTHENTICATION: ENTERPRISE_SESSION_ACTIVE</div>
+          <div class="text-slate-400">Active Tenant: AcroCorp-Financial-Prod-VPC</div>
+          <div class="text-slate-400">Connected Nodes: 18 / 18 Air-Gapped Pods</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded bg-obsidian-900 border border-slate-800">
+            <span class="text-slate-400">Vector Index Size</span>
+            <div class="text-lg font-bold text-white">418.6M vectors</div>
+          </div>
+          <div class="p-3 rounded bg-obsidian-900 border border-slate-800">
+            <span class="text-slate-400">Agent Swarm Health</span>
+            <div class="text-lg font-bold text-emerald-400">99.98% Healthy</div>
+          </div>
+        </div>
+
+        <p class="text-slate-400 text-[11px]">
+          To launch your dedicated production console with custom VPC routing and on-premise hardware telemetry, submit your request through our consultation portal below.
+        </p>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button onclick="closeConsoleModal()" class="px-4 py-2 rounded-lg bg-obsidian-900 text-slate-300 hover:text-white border border-slate-700">Close</button>
+          <a href="#contact" onclick="closeConsoleModal()" class="px-4 py-2 rounded-lg bg-cyan-glow text-obsidian-950 font-bold hover:bg-cyan-neon">Request Production Access</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DOCUMENTATION PREVIEW -->
+  <div id="doc-modal" class="fixed inset-0 z-50 hidden bg-obsidian-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-2xl rounded-2xl border border-violet-500/40 p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-white/[0.1] mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-violet-400 animate-pulse"></span>
+          <h3 class="text-sm font-bold text-white font-mono">NEXUS DEVELOPER API & SDK</h3>
+        </div>
+        <button onclick="closeDocModal()" class="text-slate-400 hover:text-white p-1">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs text-slate-300">
+        <div class="p-4 rounded-xl bg-obsidian-950 border border-slate-800">
+          <div class="text-slate-400 mb-2">// TypeScript SDK Initialization</div>
+          <pre class="text-cyan-glow overflow-x-auto leading-relaxed">import { NexusSwarm, HybridVectorRAG } from '@nexusai/sdk';
+
+const swarm = new NexusSwarm({
+  airgapEnclave: true,
+  zeroDataLeak: true,
+  retrievalStrategy: 'hybrid-dense-sparse'
+});
+
+const result = await swarm.execute({
+  prompt: "Audit APAC supply chain disruption clauses",
+  tolerance: 0.9998
+});</pre>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button onclick="closeDocModal()" class="px-4 py-2 rounded-lg bg-obsidian-900 text-slate-300 hover:text-white border border-slate-700">Dismiss</button>
+          <a href="#playground" onclick="closeDocModal()" class="px-4 py-2 rounded-lg bg-violet-500 text-white font-bold hover:bg-violet-400">Test in Playground</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT-SIDE SCRIPTS FOR STREAMING PLAYGROUND, SFX & INTERACTIONS -->
+  <script>
+    // AUDIO SYNTHESIZER FOR CYBERPUNK SOUND FX
+    let sfxEnabled = true;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playCyberBeep(frequency = 880, type = 'sine', duration = 0.08) {
+      if (!sfxEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // AudioContext not allowed before user interaction
+      }
+    }
+
+    // Toggle Sound
+    document.getElementById('sfx-toggle').addEventListener('click', () => {
+      sfxEnabled = !sfxEnabled;
+      document.getElementById('sfx-status').textContent = sfxEnabled ? 'SFX: ON' : 'SFX: OFF';
+      if (sfxEnabled) playCyberBeep(1200, 'triangle', 0.1);
+    });
+
+    // Copy CLI Command
+    function copyCliCommand() {
+      const cmd = document.getElementById('cli-cmd').textContent;
+      navigator.clipboard.writeText(cmd);
+      const tooltip = document.getElementById('copy-tooltip');
+      tooltip.classList.remove('hidden');
+      playCyberBeep(1400, 'sine', 0.1);
+      setTimeout(() => tooltip.classList.add('hidden'), 2000);
+    }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+      playCyberBeep(600, 'sine', 0.05);
+    }
+    document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+    // Modals
+    function openConsoleModal() {
+      document.getElementById('console-modal').classList.remove('hidden');
+      playCyberBeep(900, 'sine', 0.1);
+    }
+    function closeConsoleModal() {
+      document.getElementById('console-modal').classList.add('hidden');
+    }
+
+    function openDocModal() {
+      document.getElementById('doc-modal').classList.remove('hidden');
+      playCyberBeep(900, 'sine', 0.1);
+    }
+    function closeDocModal() {
+      document.getElementById('doc-modal').classList.add('hidden');
+    }
+
+    // PLAYGROUND PRESET DATA & STREAMING SIMULATOR
+    const presetScenarios = [
+      {
+        prompt: "Analyze Q3 SEC 10-K Filings for Supply Chain Disruption Risks",
+        plan: "Decomposing instruction: Querying SEC 10-K filings across 3 global supply chain tiers.",
+        steps: [
+          "[00:00.012] [PLANNER] Parsed query target: 'Tier-1 semiconductor & lithium suppliers'.",
+          "[00:00.024] [VECTOR_RAG] Querying vector index 'enterprise-10k-prod' (HNSW + BM25 hybrid)...",
+          "[00:00.038] [VECTOR_RAG] 18 relevant chunks retrieved across 3 filings (Sim: 0.964, P99: 14ms).",
+          "[00:00.051] [GUARDRAIL] PII & confidential supplier audit: Verified Zero Egress.",
+          "[00:00.068] [SYNTHESIZER] Synthesizing grounded executive summary with verified citations:"
+        ],
+        response: "Based on verified citations across Item 1A (Risk Factors) and Item 7 (MD&A) of the Q3 filings:\n\n1. Single-Source Vulnerability: 64% of high-purity silicon substrates remain concentrated in two East Asian manufacturing nodes subject to ongoing export tariff renegotiations.\n2. Force Majeure & Freight Exposure: Contractual lead times have widened from 14 weeks to 22.8 weeks, presenting a 12.4% EBITDA sensitivity in Q4 if raw cathode shipments experience freight rerouting.\n3. Mitigation Swarm Recommendation: Autonomous inventory hedging agent initiated across alternative European supply corridors with 99.98% grounded confidence."
+      },
+      {
+        prompt: "Orchestrate Multi-Agent Cloud Incident Response Swarm",
+        plan: "Triggering incident swarm: High memory saturation detected on production kubernetes worker pool.",
+        steps: [
+          "[00:00.010] [SWARM_INIT] Spawning 3 concurrent agent instances: [Diagnostician, LogMiner, Mitigator].",
+          "[00:00.021] [LOG_MINER] Ingesting 45,000 Datadog stdout lines in 8ms via vectorized parsing.",
+          "[00:00.039] [DIAGNOSTICIAN] Root cause identified: Thread-pool exhaustion in JVM telemetry agent.",
+          "[00:00.055] [MITIGATOR] Drafting rollback PR #4092 with automated sanity test suite.",
+          "[00:00.071] [HUMAN_IN_LOOP] Requesting authorized approval to trigger blue-green canary deployment."
+        ],
+        response: "Incident Response Swarm Report [SEV-2 Resolved]:\n\n- Impact: 2 pod restarts avoided, cluster latency stabilized back to 34ms.\n- Action Taken: Automatic thread-pool scale-up executed via sandboxed Kubernetes API.\n- Verification: Grounded validation confirms 0 dropped API requests and 100% data consistency.\n- Audit Trail: Immutable SHA-256 hash generated for compliance logging."
+      },
+      {
+        prompt: "Execute Zero-Data-Leak HIPAA Compliance Audit",
+        plan: "Auditing clinical trial dataset against HIPAA Title II & GDPR privacy standards.",
+        steps: [
+          "[00:00.011] [AIR_GAP] Confirming memory isolation inside AMD SEV hardware enclave.",
+          "[00:00.028] [SANITIZER] Scanning 1.2M medical records for 18 distinct Safe Harbor identifiers.",
+          "[00:00.044] [DE_IDENTIFY] Reversible cryptographic tokenization applied to patient MRNs.",
+          "[00:00.062] [COMPLIANCE] Differential privacy epsilon parameter set to ε=0.45.",
+          "[00:00.079] [CERTIFICATION] Audit completed with 0 plaintext PII leaks detected."
+        ],
+        response: "Zero-Data-Leak Audit Certification #HIPAA-8841:\n\n- Scope: 1,248,000 multi-site oncology patient trial records.\n- Verification: 100% of patient identifiers securely scrubbed and tokenized in hardware-isolated memory.\n- Egress Check: Zero outbound network packets sent outside local customer VPC.\n- Status: APPROVED for autonomous analytical research."
+      },
+      {
+        prompt: "Run Hybrid Vector RAG Retrieval across 10M Enterprise Documents",
+        plan: "Executing hybrid sparse-dense vector retrieval benchmark across 10,000,000 sharded documents.",
+        steps: [
+          "[00:00.009] [VECTOR_CLUSTER] Distributing query across 18 HNSW shards in parallel.",
+          "[00:00.022] [SPARSE_BM25] Evaluating keyword frequency and inverse document frequency matrices.",
+          "[00:00.035] [RERANKER] Applying Cohere-v3 neural reranking model to top 150 candidates.",
+          "[00:00.047] [CACHE] Multi-tenant vector cache hit ratio: 89.4%.",
+          "[00:00.061] [BENCHMARK] Global P99 retrieval finalized in 38.2 milliseconds."
+        ],
+        response: "Vector Pipeline Benchmark Results:\n\n- Total Corpora Scanned: 10,000,000 enterprise documents (3.8 Billion tokens).\n- Hybrid Rerank Latency: 38.2ms (94% faster than standard single-dense search).\n- Mean Reciprocal Rank (MRR@10): 0.948.\n- Citations: 4 authoritative corporate knowledge articles extracted with zero semantic drift."
+      }
+    ];
+
+    let isStreaming = false;
+
+    function runPresetPrompt(index) {
+      if (isStreaming) return;
+      const scenario = presetScenarios[index];
+      document.getElementById('prompt-input').value = scenario.prompt;
+      executeScenario(scenario);
+    }
+
+    function handleCustomSubmit(e) {
+      e.preventDefault();
+      if (isStreaming) return;
+      const input = document.getElementById('prompt-input').value.trim();
+      if (!input) return;
+
+      const scenario = {
+        prompt: input,
+        plan: `Analyzing custom query: "${input.substring(0, 50)}..."`,
+        steps: [
+          `[00:00.012] [PLANNER] Query intent parsed: Enterprise autonomous context extraction.`,
+          `[00:00.026] [VECTOR_RAG] Querying vector index across 18 clusters with dynamic chunking...`,
+          `[00:00.041] [GUARDRAIL] Verifying cryptographic privacy bounds: 0 egress detected.`,
+          `[00:00.058] [SYNTHESIZER] Generating verified grounded response with zero-hallucination constraint:`
+        ],
+        response: `NexusAI Autonomous Swarm Response for query "${input}":\n\n1. Deterministic Grounding: The hybrid vector engine cross-referenced your parameters across active knowledge stores with 99.98% citation accuracy.\n2. Latency Metrics: Execution completed in 39ms with zero external telemetry egress.\n3. Continuous Monitoring: Self-healing agent verified deterministic outputs and committed state to local audit enclave.`
+      };
+
+      executeScenario(scenario);
+    }
+
+    function executeScenario(scenario) {
+      isStreaming = true;
+      document.getElementById('run-btn').disabled = true;
+      playCyberBeep(700, 'sawtooth', 0.1);
+
+      const logsContainer = document.getElementById('terminal-logs');
+      const streamingContainer = document.getElementById('streaming-container');
+      const streamingText = document.getElementById('streaming-text');
+      
+      logsContainer.innerHTML = '';
+      streamingContainer.classList.add('hidden');
+      streamingText.textContent = '';
+
+      // Append Prompt Banner
+      const promptDiv = document.createElement('div');
+      promptDiv.className = 'p-3 rounded-lg bg-cyan-950/30 border border-cyan-500/40 text-cyan-glow font-mono text-xs';
+      promptDiv.innerHTML = `<strong>&gt; USER QUERY:</strong> ${escapeHtml(scenario.prompt)}`;
+      logsContainer.appendChild(promptDiv);
+
+      // Play Step by Step Logs
+      let stepIndex = 0;
+      function showNextStep() {
+        if (stepIndex < scenario.steps.length) {
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'text-xs font-mono text-slate-300 py-0.5 flex items-center gap-2';
+          stepDiv.innerHTML = `<span class="text-cyan-glow">●</span> <span>${scenario.steps[stepIndex]}</span>`;
+          logsContainer.appendChild(stepDiv);
+          
+          const screen = document.getElementById('terminal-screen');
+          screen.scrollTop = screen.scrollHeight;
+          playCyberBeep(900 + (stepIndex * 150), 'sine', 0.04);
+
+          stepIndex++;
+          setTimeout(showNextStep, 220);
+        } else {
+          // Begin Token Streaming Response
+          streamingContainer.classList.remove('hidden');
+          streamTokens(scenario.response);
+        }
+      }
+
+      setTimeout(showNextStep, 150);
+    }
+
+    function streamTokens(fullText) {
+      const streamingText = document.getElementById('streaming-text');
+      const words = fullText.split(' ');
+      let wordIdx = 0;
+
+      function streamWord() {
+        if (wordIdx < words.length) {
+          streamingText.textContent += (wordIdx === 0 ? '' : ' ') + words[wordIdx];
+          wordIdx++;
+          
+          if (wordIdx % 4 === 0) {
+            playCyberBeep(1100, 'sine', 0.02);
+          }
+
+          const screen = document.getElementById('terminal-screen');
+          screen.scrollTop = screen.scrollHeight;
+
+          const delay = Math.floor(Math.random() * 20) + 15;
+          setTimeout(streamWord, delay);
+        } else {
+          // Finished Streaming
+          isStreaming = false;
+          document.getElementById('run-btn').disabled = false;
+          playCyberBeep(1400, 'triangle', 0.15);
+        }
+      }
+
+      streamWord();
+    }
+
+    function clearTerminal() {
+      if (isStreaming) return;
+      document.getElementById('terminal-logs').innerHTML = `
+        <div class="p-4 rounded-xl bg-obsidian-900/60 border border-slate-800 text-slate-300">
+          <span class="text-cyan-glow font-bold">TERMINAL RESET:</span> Select a preset or type a prompt below to run.
+        </div>
+      `;
+      document.getElementById('streaming-container').classList.add('hidden');
+      document.getElementById('streaming-text').textContent = '';
+      playCyberBeep(500, 'square', 0.08);
+    }
+
+    function escapeHtml(string) {
+      return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Lead Generation Form Handler
+    function handleLeadSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('lead-submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-obsidian-950 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        CALCULATING ARCHITECTURE FIT...
+      `;
+      playCyberBeep(800, 'triangle', 0.2);
+
+      setTimeout(() => {
+        btn.classList.add('hidden');
+        document.getElementById('lead-success').classList.remove('hidden');
+        playCyberBeep(1300, 'sine', 0.3);
+      }, 1200);
+    }
+  </script>
+</body>
+</html>
